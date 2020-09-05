@@ -12,8 +12,8 @@
 
     <ru.mertsalovda.avatarimageview.ui.custom.AvatarImageView
             android:id="@+id/avatar"
-            android:src="@drawable/korra"
             android:layout_width="240dp"
+            android:src="@drawable/korra"
             app:aiv_initials="JM"
             android:layout_height="240dp"/>
 
@@ -33,6 +33,12 @@
     <Button
             android:id="@+id/btn_initials"
             android:text="INITIALS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/btn_image"
+            android:text="IMAGE"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

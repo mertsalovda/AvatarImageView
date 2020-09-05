@@ -1,18 +1,15 @@
 package ru.mertsalovda.avatarimageview.ui.custom
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.Px
-import androidx.core.animation.doOnRepeat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.toRectF
 import ru.mertsalovda.avatarimageview.R
@@ -73,8 +70,6 @@ class AvatarImageView @JvmOverloads constructor(
 
         scaleType = ScaleType.CENTER_CROP
         setup()
-
-        setOnLongClickListener { handleLongClick() }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -133,17 +128,32 @@ class AvatarImageView @JvmOverloads constructor(
 
     override fun setImageBitmap(bm: Bitmap?) {
         super.setImageBitmap(bm)
-        if (isAvatarMode) prepareShader(width, height)
+        isAvatarMode = if (bm != null) {
+            prepareShader(width, height)
+            true
+        } else {
+            false
+        }
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
         super.setImageDrawable(drawable)
-        if (isAvatarMode) prepareShader(width, height)
+        isAvatarMode = if (drawable != null) {
+            prepareShader(width, height)
+            true
+        } else {
+            false
+        }
     }
 
     override fun setImageResource(resId: Int) {
         super.setImageResource(resId)
-        if (isAvatarMode) prepareShader(width, height)
+        isAvatarMode = if (resId != 0) {
+            prepareShader(width, height)
+            true
+        } else {
+            false
+        }
     }
 
     fun setInitials(initials: String) {
@@ -159,8 +169,8 @@ class AvatarImageView @JvmOverloads constructor(
         invalidate()
     }
 
-    fun setBorderWidht(@Dimension widht: Int) {
-        borderWidth = context.dpToPx(widht)
+    fun setBorderWidth(@Dimension width: Int) {
+        borderWidth = context.dpToPx(width)
         borderPaint.strokeWidth = borderWidth
         invalidate()
     }
@@ -211,23 +221,6 @@ class AvatarImageView @JvmOverloads constructor(
         val d = b / len.toDouble()
         val index = ((d - truncate(d)) * len).toInt()
         return bgColors[index]
-    }
-
-    private fun handleLongClick(): Boolean {
-        val va = ValueAnimator.ofInt(width, (width * 1.25).toInt()).apply {
-            duration = 100
-            interpolator = LinearInterpolator()
-            repeatMode = ValueAnimator.REVERSE
-            repeatCount = 1
-        }
-        va.doOnRepeat { toggleMode() }
-        va.addUpdateListener {
-            size = it.animatedValue as Int
-            requestLayout()
-        }
-        va.start()
-
-        return true
     }
 
     private fun toggleMode() {
